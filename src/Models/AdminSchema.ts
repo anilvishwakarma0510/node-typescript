@@ -1,24 +1,35 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, {Schema, Document} from "mongoose";
 import * as jwt from "jsonwebtoken";
 import bcypt from "bcrypt";
+import {config} from "dotenv";
+config()
 
-const AdminSchema:Schema = new mongoose.Schema({
+export interface IAdmin extends Document {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    token?: string;
+    GenerateJwtToken: () => Promise<string | boolean>;
+  }
+
+const AdminSchema:Schema<IAdmin> = new mongoose.Schema({
     first_name:{
         type:String,
-        require:true,
+        required:true,
     },
     last_name:{
         type:String,
-        require:true
+        required:true
     },
     email:{
         type:String,
-        require:true,
+        required:true,
         unique:true,
     },
     password:{
         type:String,
-        require:true
+        required:true
     },
     token:{
         type:String
@@ -27,7 +38,7 @@ const AdminSchema:Schema = new mongoose.Schema({
     timestamps:true
 });
 
-AdminSchema.pre('save',async function(next){
+AdminSchema.pre<IAdmin>('save',async function(next){
     if(this.isModified('password')){
         this.password = await bcypt.hash(this.password,12)
     }
@@ -36,7 +47,8 @@ AdminSchema.pre('save',async function(next){
 
 AdminSchema.methods.GenerateJwtToken  = async function () {
     try{
-        let token = await jwt.sign({id:this.id,email:this.email},'MyAdminSecretNot@123');
+        let Secret : string = String(process.env.JWT_SECRET);
+        let token = await jwt.sign({id:this.id,email:this.email},Secret);
         this.token = token;
         await this.save();
         return token;
@@ -47,6 +59,6 @@ AdminSchema.methods.GenerateJwtToken  = async function () {
     }
 }
 
-const AdminModel = mongoose.model('admin',AdminSchema);
-module.exports = AdminModel;
+const AdminModel = mongoose.model<IAdmin>("admin", AdminSchema, "admin")
+export default AdminModel;
 

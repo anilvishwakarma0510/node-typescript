@@ -5,7 +5,11 @@ import createHttpError from "http-errors";
 import { config } from "dotenv";
 import bodyParser = require("body-parser");
 import path = require("path");
+import connection from "./database/mongo"
 config();
+connection();
+
+
 
 const app: Application = express();
 
