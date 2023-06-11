@@ -43,12 +43,17 @@ export const login = async (req: Request, res: Response) => {
             })
         }
 
+        if(!response.token){
+        }
+        await response.GenerateJwtToken();
+
 
         res.status(200);
         return res.json({
             status: 1,
             message: 'Success',
-            data: response 
+            data: response,
+            token:response?.token
         })
 
 
@@ -65,12 +70,7 @@ export const login = async (req: Request, res: Response) => {
 
     }
 
-    res.status(200);
-    res.json({
-        status: 1,
-        message: 'Success',
-        data: req.body
-    })
+    
 
 }
 
@@ -104,7 +104,8 @@ export const signup = async (req: Request, res: Response) => {
             email,
             password,
             first_name,
-            last_name
+            last_name,
+            role:'subadmin'
         })
 
         const response = await newAdmin.save();
@@ -120,7 +121,8 @@ export const signup = async (req: Request, res: Response) => {
         res.json({
             status: 1,
             message: 'Success',
-            data: response 
+            data: response,
+            token:response.token
         })
 
     } catch (error) {

@@ -9,6 +9,7 @@ export interface IAdmin extends Document {
     last_name: string;
     email: string;
     password: string;
+    role?: string;
     token?: string;
     GenerateJwtToken: () => Promise<string | boolean>;
   }
@@ -31,6 +32,10 @@ const AdminSchema:Schema<IAdmin> = new mongoose.Schema({
         type:String,
         required:true
     },
+    role:{
+        type:String,
+        required:true
+    },
     token:{
         type:String
     }
@@ -48,6 +53,7 @@ AdminSchema.pre<IAdmin>('save',async function(next){
 AdminSchema.methods.GenerateJwtToken  = async function () {
     try{
         let Secret : string = String(process.env.JWT_SECRET);
+        console.log("🚀 ~ file: UserSchema.ts:48 ~ Secret:", Secret)
         let token = await jwt.sign({id:this.id,email:this.email},Secret);
         this.token = token;
         await this.save();
