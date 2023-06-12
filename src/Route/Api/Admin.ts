@@ -12,6 +12,7 @@ route.post('/signup',AuthConroller.signup);
 route.get('/get-admin-detail',AdminAuth,AdminController.GetAdminDetail);
 
 route.post('/add-user',AdminAuth,UserController.AddUser);
+route.post('/edit-user',AdminAuth,UserController.EditUser);
 route.get('/get-users',AdminAuth,UserController.GetUsers);
 
 

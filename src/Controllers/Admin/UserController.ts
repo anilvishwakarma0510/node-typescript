@@ -6,7 +6,7 @@ import { Response } from "express";
 export const AddUser = async (req: AdminRequest, res: Response) => {
     try {
 
-        const { first_name, last_name, email, password,gender }: { first_name: string, last_name: string, email: string, password: string,gender:String }  =  req.body;
+        const { first_name, last_name, email, password,gender }: { first_name: string, last_name: string, email: string, password: string, gender:'male' | 'female' | 'other' }  =  req.body;
 
         if(!first_name || !last_name || !email || !password ||!gender){
             return res.status(400).json({
@@ -37,6 +37,73 @@ export const AddUser = async (req: AdminRequest, res: Response) => {
         return res.status(200).json({
             status:1,
             message:'User has been created successfully'
+        });  
+
+    } catch (error:any) {
+        console.log("🚀 ~ file: UserController.ts:9 ~ AddUser ~ error:", error)
+        return res.status(500).json({
+            status: 0,
+            message: (error?._message) ? error?._message : 'Something went wrong',
+            errors: (error?.errors) ? error?.errors : {}
+        })
+    }
+}
+
+export const EditUser = async (req: AdminRequest, res: Response) => {
+    try {
+
+        const { id, first_name, last_name, email, password,gender }: { id:string, first_name: string, last_name: string, email: string, password: string, gender:'male' | 'female' | 'other' }  =  req.body;
+
+        if(!id || !first_name || !last_name || !email || !password || !gender){
+            return res.status(400).json({
+                status:0,
+                message:'check parameter'
+            });
+        }
+
+        const check = await UserModel.exists({email:email,_id:{$ne:id}});
+
+        if(check){
+            return res.status(400).json({
+                status:0,
+                message:'Email already exist'
+            });  
+        }
+
+        const user = await UserModel.findOne({_id:id});
+
+        if(!user){
+            return res.status(400).json({
+                status:0,
+                message:'Email already exist'
+            });  
+        }
+
+      
+        if(password){
+            user.password = password;
+        }
+
+        if(first_name){
+            user.first_name = first_name;
+        }
+
+        if(email){
+            user.email = email;
+        }
+
+        if(last_name){
+            user.last_name = last_name;
+        }
+
+        if(gender){
+            user.gender = gender;
+        }
+        user.save();
+
+        return res.status(200).json({
+            status:1,
+            message:'User has been updated successfully'
         });  
 
     } catch (error:any) {

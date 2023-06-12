@@ -6,7 +6,7 @@ export interface IUser extends Document {
     first_name: string;
     last_name: string;
     email: string;
-    gender:"mail"|"femail"|"other";
+    gender:"male"  |"female" | "other";
     password: string;
     token?: string;
     GenerateJwtToken: () => Promise<string | boolean>
@@ -29,7 +29,7 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
     gender: {
         type: String,
         required: true,
-        enum: ['male','femail','gender']
+        enum: ['male','female','other']
     },
     password: {
         type: String,
@@ -52,7 +52,6 @@ UserSchema.pre('save',async function(next){
 UserSchema.methods.GenerateJwtToken = async function () {
     try {
         const Secret:string = String(process.env.JWT_SECRET);
-        console.log("🚀 ~ file: UserSchema.ts:48 ~ Secret:", Secret)
         let token = await jwt.sign({id:this.id,email:this.email},Secret);
         this.token = token;
         await this.token;
