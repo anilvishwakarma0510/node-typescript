@@ -23,6 +23,13 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
     res.send('Hi Anil');
 });
 
+app.get('/*', (req: Request, res: Response, next: NextFunction) => {
+    res.status(404).json({
+        status: 404,
+        message: "Not Found",
+    });
+});
+
 app.use((req: Request, res: Response, next: NextFunction) => {
     next(new createHttpError.NotFound());
 })
@@ -44,3 +51,4 @@ const server: Server = app.listen(PORT, () => {
     console.log("🚀 Server is running or ", PORT)
 })
 
+export default app;
