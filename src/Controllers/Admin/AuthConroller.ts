@@ -25,20 +25,19 @@ export const login = async (req: Request, res: Response) => {
 
         if(!response){
             
-            return res.status(403).json({
+            return res.status(401).json({
                 status: 0,
                 message: 'Invalid Credential',
                 data: req.body
             });
         }
 
-        console.log(response)
 
         let check :boolean = await bcrypt.compare(password,response.password)
 
         if(!check){
             return res.status(401).json({
-                status: 1,
+                status: 0,
                 message: 'Invalid Credential',
             })
         }

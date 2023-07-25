@@ -53,7 +53,6 @@ AdminSchema.pre<IAdmin>('save',async function(next){
 AdminSchema.methods.GenerateJwtToken  = async function () {
     try{
         let Secret : string = String(process.env.JWT_SECRET);
-        console.log("🚀 ~ file: UserSchema.ts:48 ~ Secret:", Secret)
         let token = await jwt.sign({id:this.id,email:this.email},Secret);
         this.token = token;
         await this.save();
