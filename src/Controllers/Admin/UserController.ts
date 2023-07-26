@@ -36,7 +36,8 @@ export const AddUser = async (req: AdminRequest, res: Response) => {
 
         return res.status(200).json({
             status:1,
-            message:'User has been created successfully'
+            message:'User has been created successfully',
+            data:user
         });  
 
     } catch (error:any) {
@@ -161,6 +162,38 @@ export const GetUsers = async (req:AdminRequest,res:Response) => {
     }
 }
 
+export const DeleteUser =async (req:AdminRequest,res:Response) => {
+   try {
+
+    const userId: any = req.query.id;
+
+    if(!userId){
+        return res.status(400).json({
+            status:0,
+            message:'check parameter'
+        }); 
+    }
+
+    const user:IUser | null = await UserModel.findById(userId);
+    //console.log("🚀 ~ file: UserController.ts:177 ~ DeleteUser ~ user:", user)
+    
+
+
+    await UserModel.findByIdAndDelete(userId);
+
+    return res.status(200).json({
+        status: 1,
+        message: 'User has been deleted successfully',
+      });
+
+   } catch(error:any){
+        return res.status(500).json({
+            status: 0,
+            message: (error?._message) ? error?._message : 'Something went wrong',
+            errors: (error?.errors) ? error?.errors : {}
+        });
+   }
+}
 const QueryBuilder = (req:any) => {
     
     const query : any = {};
