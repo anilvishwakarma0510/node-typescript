@@ -21,5 +21,5 @@ const constants = {
     USER_TYPE_REQUIRED:'User type is required',
     USER_TYPE_VALIDATION:'User type field only accept customer or seller value',
 }
-
+ 
 export default constants;
